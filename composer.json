@@ -1,0 +1,27 @@
+{
+  "name": "loveorigami/yii2-fullcalendar",
+  "description": "A wrapper for fullcalendar",
+  "keywords": [
+    "yii2",
+    "fullcalendar"
+  ],
+  "homepage": "https://github.com/loveorigami/yii2-fullcalendar",
+  "version": "0.1",
+  "type": "yii2-extension",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Edo Freriks",
+      "email": "edofre@gmail.com"
+    },
+    {
+      "name": "Lukyanov Andrey",
+      "homepage": "http://loveorigami.info"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "lo\\widgets\\fullcalendar\\": "src/"
+    }
+  }
+}
