@@ -1,6 +1,12 @@
 {
   "name": "loveorigami/yii2-fullcalendar",
   "description": "A wrapper for fullcalendar",
+    "require": {
+    "yiisoft/yii2": ">=2.0.9",
+    "yiisoft/yii2-jui": ">=2.0.6",
+    "bower-asset/fullcalendar": "*",
+    "bower-asset/fullcalendar-scheduler": "*"
+  },
   "keywords": [
     "yii2",
     "fullcalendar"
