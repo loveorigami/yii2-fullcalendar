@@ -12,10 +12,12 @@ class PrintAsset extends \yii\web\AssetBundle
     public $css = [
         'fullcalendar.print.css',
     ];
+
     /** @var  array The CSS options */
     public $cssOptions = [
         'media' => 'print',
     ];
+
     /** @var  string Npm path for the print settings */
     public $sourcePath = '@bower/fullcalendar/dist';
 }
