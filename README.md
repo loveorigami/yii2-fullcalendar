@@ -18,7 +18,7 @@ to the require section of your composer.json file.
 ## Usage
 ### Simple usage with array data
 ```php
-<?= \lo\widgets\fullcalendar\SchedulerWidget::widget([
+<?= \lo\widgets\fullcalendar\FullcalendarScheduler::widget([
 	'header'        => [
 		'left'   => 'today prev,next',
 		'center' => 'title',
@@ -87,7 +87,7 @@ to the require section of your composer.json file.
 
 ### Simple use with JSON data from controller actions
 ```php
-<?= \lo\widgets\fullcalendar\SchedulerWidget::widget([
+<?= \lo\widgets\fullcalendar\FullcalendarScheduler::widget([
 	'header'        => [
 		'left'   => 'today prev,next',
 		'center' => 'title',
