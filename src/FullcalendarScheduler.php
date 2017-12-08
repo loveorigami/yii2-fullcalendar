@@ -2,12 +2,20 @@
 
 namespace lo\widgets\fullcalendar;
 
+use lo\widgets\fullcalendar\assets\FullcalendarAsset;
+use lo\widgets\fullcalendar\assets\FullcalendarSchedulerAsset;
+use lo\widgets\fullcalendar\assets\ThemeAsset;
+use yii\base\Widget;
+use yii\helpers\Html;
+use yii\helpers\Json;
+use yii\web\JsExpression;
+
 /**
  * Class FullcalendarSchedulerWidget
  * @package lo\widgets\fullcalendar
  * @author Lukyanov Andrey <loveorigami@mail.ru>
  */
-class FullcalendarScheduler extends \yii\base\Widget
+class FullcalendarScheduler extends Widget
 {
     /**
      * @var array  The fullcalendar options, for all available options check http://fullcalendar.io/docs/
@@ -17,16 +25,20 @@ class FullcalendarScheduler extends \yii\base\Widget
         'default' => 'timelineDay',
         'editable' => false,
     ];
+
     /**
      * @var array  Array containing the events, can be JSON array, PHP array or URL that returns an array containing JSON events
      */
     public $events = [];
+
     /**
      * @var array  Array containing the resources, can be JSON array, PHP array or URL that returns an array containing JSON resources
      */
     public $resources = [];
+
     /** @var boolean  Determines whether or not to include the gcal.js */
     public $googleCalendar = false;
+
     /**
      * @var array
      * Possible header keys
@@ -51,8 +63,10 @@ class FullcalendarScheduler extends \yii\base\Widget
         'left' => 'prev,next, today',
         'right' => 'timelineDay,timelineWeek,timelineMonth,timelineYear',
     ];
+
     /** @var string  Text to display while the calendar is loading */
     public $loading = 'Please wait, calendar is loading';
+
     /**
      * @var array  Default options for the id and class HTML attributes
      */
@@ -60,6 +74,7 @@ class FullcalendarScheduler extends \yii\base\Widget
         'id' => 'calendar',
         'class' => 'fullcalendar',
     ];
+
     /**
      * @var boolean  Whether or not we need to include the ThemeAsset bundle
      */
@@ -86,7 +101,6 @@ class FullcalendarScheduler extends \yii\base\Widget
     public function run()
     {
         FullcalendarSchedulerAsset::register($this->view);
-
         $assets = FullcalendarAsset::register($this->view);
 
         if ($this->theme === true) {
@@ -103,7 +117,7 @@ class FullcalendarScheduler extends \yii\base\Widget
 
         $this->view->registerJs(implode("\n", [
             "jQuery('#{$this->options['id']}').fullCalendar({$this->getClientOptions()});",
-        ]), \yii\web\View::POS_READY);
+        ]));
 
         $this->echoLoadingTags();
     }
@@ -113,11 +127,11 @@ class FullcalendarScheduler extends \yii\base\Widget
      */
     private function echoLoadingTags()
     {
-        echo \yii\helpers\Html::beginTag('div', $this->options) . "\n";
-        echo \yii\helpers\Html::beginTag('div', ['class' => 'fc-loading', 'style' => 'display:none;']);
-        echo \yii\helpers\Html::encode($this->loading);
-        echo \yii\helpers\Html::endTag('div') . "\n";
-        echo \yii\helpers\Html::endTag('div') . "\n";
+        echo Html::beginTag('div', $this->options) . "\n";
+        echo Html::beginTag('div', ['class' => 'fc-loading', 'style' => 'display:none;']);
+        echo Html::encode($this->loading);
+        echo Html::endTag('div') . "\n";
+        echo Html::endTag('div') . "\n";
     }
 
     /**
@@ -127,7 +141,7 @@ class FullcalendarScheduler extends \yii\base\Widget
      */
     private function getClientOptions()
     {
-        $options['loading'] = new \yii\web\JsExpression("function(isLoading, view ) {
+        $options['loading'] = new JsExpression("function(isLoading, view ) {
 			jQuery('#{$this->options['id']}').find('.fc-loading').toggle(isLoading);
         }");
 
@@ -135,7 +149,6 @@ class FullcalendarScheduler extends \yii\base\Widget
         $options['resources'] = $this->resources;
         $options = array_merge($options, $this->clientOptions);
 
-        return \yii\helpers\Json::encode($options);
+        return Json::encode($options);
     }
-
 }

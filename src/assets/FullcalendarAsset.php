@@ -1,11 +1,15 @@
 <?php
 
-namespace lo\widgets\fullcalendar;
+namespace lo\widgets\fullcalendar\assets;
+
+use yii\web\AssetBundle;
 
 /**
- * Class CoreAsset
+ * Class FullcalendarAsset
+ * @package lo\widgets\fullcalendar\assets
+ * @author Lukyanov Andrey <loveorigami@mail.ru>
  */
-class FullcalendarAsset extends \yii\web\AssetBundle
+class FullcalendarAsset extends AssetBundle
 {
     /** @var  string Location of the fullcalendar scheduler distribution */
     public $sourcePath = '@bower/fullcalendar/dist';
@@ -26,8 +30,8 @@ class FullcalendarAsset extends \yii\web\AssetBundle
     /** @var  array List of the dependencies this assets bundle requires */
     public $depends = [
         'yii\web\YiiAsset',
-        'lo\widgets\fullcalendar\MomentAsset',
-        'lo\widgets\fullcalendar\PrintAsset',
+        'lo\widgets\fullcalendar\assets\MomentAsset',
+        'lo\widgets\fullcalendar\assets\PrintAsset',
     ];
 
     /**

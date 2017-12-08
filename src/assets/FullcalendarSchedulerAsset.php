@@ -1,12 +1,12 @@
 <?php
 
-namespace lo\widgets\fullcalendar;
+namespace lo\widgets\fullcalendar\assets;
 
 use yii\web\AssetBundle;
 
 /**
- * Class FullcalendarSchedulerWidget
- * @package lo\widgets\fullcalendar
+ * Class FullcalendarSchedulerAsset
+ * @package lo\widgets\fullcalendar\assets
  * @author Lukyanov Andrey <loveorigami@mail.ru>
  */
 class FullcalendarSchedulerAsset extends AssetBundle
@@ -26,6 +26,6 @@ class FullcalendarSchedulerAsset extends AssetBundle
 
     /** @var  array List of the dependencies this assets bundle requires */
     public $depends = [
-        'lo\widgets\fullcalendar\FullcalendarAsset',
+        'lo\widgets\fullcalendar\assets\FullcalendarAsset',
     ];
 }

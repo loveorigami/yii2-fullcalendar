@@ -1,12 +1,15 @@
 <?php
 
-namespace lo\widgets\fullcalendar;
+namespace lo\widgets\fullcalendar\assets;
+
+use yii\web\AssetBundle;
 
 /**
  * Class PrintAsset
- * @package edofre\fullcalendarscheduler
+ * @package lo\widgets\fullcalendar\assets
+ * @author Lukyanov Andrey <loveorigami@mail.ru>
  */
-class PrintAsset extends \yii\web\AssetBundle
+class PrintAsset extends AssetBundle
 {
     /** @var  array The CSS file for the print style */
     public $css = [

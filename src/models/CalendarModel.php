@@ -2,10 +2,14 @@
 
 namespace lo\widgets\fullcalendar\models;
 
+use yii\base\Model;
+
 /**
  * Class CalendarModel
+ * @package lo\widgets\fullcalendar\models
+ * @author Lukyanov Andrey <loveorigami@mail.ru>
  */
-class CalendarModel extends \yii\base\Model
+class CalendarModel extends Model
 {
     /**
      * @return array
