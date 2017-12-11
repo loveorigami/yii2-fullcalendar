@@ -6,7 +6,7 @@
     "fullcalendar"
   ],
   "homepage": "https://github.com/loveorigami/yii2-fullcalendar",
-  "version": "0.2",
+  "version": "1.0",
   "type": "yii2-extension",
   "license": "MIT",
   "authors": [
@@ -22,6 +22,7 @@
   "require": {
     "yiisoft/yii2": ">=2.0.9",
     "yiisoft/yii2-jui": ">=2.0.6",
+    "loveorigami/yii2-modal-ajax": "*",
     "bower-asset/fullcalendar": "*",
     "bower-asset/fullcalendar-scheduler": "*"
   },

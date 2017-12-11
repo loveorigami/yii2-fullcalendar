@@ -15,6 +15,17 @@ or add
 ```
 to the require section of your composer.json file.
 
+## Usage with presets
+```php
+use lo\widgets\fullcalendar\FullcalendarScheduler;
+use lo\widgets\fullcalendar\presets\SchedulerDemoPreset;
+
+echo FullcalendarScheduler::widget([
+    'presetClass' => SchedulerDemoPreset::class,
+]);
+```
+more options see bottom...
+
 ## Usage
 ### Simple usage with array data
 ```php

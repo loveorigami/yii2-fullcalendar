@@ -2,11 +2,15 @@
 
 namespace lo\widgets\fullcalendar;
 
+use lo\core\helpers\ArrayHelper;
 use lo\widgets\fullcalendar\assets\FullcalendarAsset;
 use lo\widgets\fullcalendar\assets\FullcalendarSchedulerAsset;
 use lo\widgets\fullcalendar\assets\ThemeAsset;
+use lo\widgets\fullcalendar\dto\SelectModalDto;
+use lo\widgets\fullcalendar\presets\IPreset;
+use lo\widgets\modal\ModalAjax;
+use Yii;
 use yii\base\Widget;
-use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\web\JsExpression;
 
@@ -17,6 +21,9 @@ use yii\web\JsExpression;
  */
 class FullcalendarScheduler extends Widget
 {
+    /** @var  string */
+    public $presetClass;
+
     /**
      * @var array  The fullcalendar options, for all available options check http://fullcalendar.io/docs/
      */
@@ -81,6 +88,54 @@ class FullcalendarScheduler extends Widget
     public $theme = false;
 
     /**
+     * @var string url controler save drop move select.
+     */
+    public $eventDropUrl;
+
+    /**
+     * @var string
+     * Example select expression : JsExpression
+     * $JSEventSelect = <<<EOF
+     * function(start, end, jsEvent, view) {
+     *      alert (start + end);
+     * }
+     * EOF;
+     */
+    public $selectExpression;
+
+    /**
+     * @var array
+     */
+    public $selectModalOptions = [
+        'id' => 'modal-select',
+        'headerLabel' => 'Model Header Label',
+        'modal-size' => 'modal-lg',
+        'url' => ''
+    ];
+
+    /**
+     * @var SelectModalDto
+     */
+    protected $selectModalDto;
+
+    /**
+     * Modal Form, 'CLICK SHOW' for fullcalendar schedule
+     * @var array
+     * Example click views : JsExpression
+     * $JSEventClick = <<<EOF
+     *     function( start, end, jsEvent, view) {
+     *        $.get('/fullcalendar/test/test-form',function(data){    // URL Controller render
+     *            $('#modal-click').modal('show')                        // Id of Modal click
+     *            .find('#modalContent')                                // Content Id rendered
+     *            .html(data);
+     *        });
+     *    }
+     * EOF;
+     * @author piter novian [ptr.nov@gmail.com]
+     */
+
+
+    /**
      * Always make sure we have a valid id and class for the Fullcalendar widget
      */
     public function init()
@@ -88,9 +143,12 @@ class FullcalendarScheduler extends Widget
         if (!isset($this->options['id'])) {
             $this->options['id'] = $this->getId();
         }
+
         if (!isset($this->options['class'])) {
             $this->options['class'] = 'fullcalendar';
         }
+
+        $this->selectModalDto = new SelectModalDto($this->selectModalOptions);
 
         parent::init();
     }
@@ -119,19 +177,11 @@ class FullcalendarScheduler extends Widget
             "jQuery('#{$this->options['id']}').fullCalendar({$this->getClientOptions()});",
         ]));
 
-        $this->echoLoadingTags();
-    }
-
-    /**
-     * Echo the tags to show the loading state for the calendar
-     */
-    private function echoLoadingTags()
-    {
-        echo Html::beginTag('div', $this->options) . "\n";
-        echo Html::beginTag('div', ['class' => 'fc-loading', 'style' => 'display:none;']);
-        echo Html::encode($this->loading);
-        echo Html::endTag('div') . "\n";
-        echo Html::endTag('div') . "\n";
+        return $this->render('scheduler', [
+            'options' => $this->options,
+            'loading' => $this->loading,
+            'selectModal' => $this->getSelectModal()
+        ]);
     }
 
     /**
@@ -141,14 +191,126 @@ class FullcalendarScheduler extends Widget
      */
     private function getClientOptions()
     {
-        $options['loading'] = new JsExpression("function(isLoading, view ) {
-			jQuery('#{$this->options['id']}').find('.fc-loading').toggle(isLoading);
+        $options = $this->clientOptions;
+
+        $id = $this->options['id'];
+
+        $options['loading'] = new JsExpression("function(isLoading, view) {
+			jQuery('#$id').find('.fc-loading').toggle(isLoading);
         }");
 
-        $options['events'] = $this->events;
-        $options['resources'] = $this->resources;
-        $options = array_merge($options, $this->clientOptions);
+        if (!isset($options['select'])) {
+            $options['select'] = $this->getSelectExpression();
+        }
 
         return Json::encode($options);
+    }
+
+    /**
+     * @return null|string
+     */
+    protected function getSelectModal()
+    {
+        if (!$this->selectModalDto->hasUrl()) {
+            return null;
+        }
+
+        return ModalAjax::widget([
+            'url' => $this->selectModalDto->getUrl(),
+            'size' => $this->selectModalDto->getSize(),
+            'header' => $this->selectModalDto->getHeader(),
+            'options' => [
+                "id" => $this->selectModalDto->getId(),
+                'tabindex' => false,
+                'class' => 'header-primary',
+            ],
+            'clientOptions' => ['backdrop' => 'static', 'keyboard' => FALSE]
+        ]);
+    }
+
+    /**
+     * @return null|JsExpression
+     */
+    protected function getSelectExpression()
+    {
+        if ($this->selectExpression && !$this->selectModalDto->hasUrl()) {
+            return ($this->selectExpression instanceof JsExpression) ? $this->selectExpression : new JsExpression($this->selectExpression);
+        }
+
+        if ($this->selectModalDto->hasUrl()) {
+            return new JsExpression("function(start,end,jsEvent,view){
+                        var dateTime2 = new Date(end);
+                        var dateTime1 = new Date(start);
+                        var tgl1 = moment(dateTime1).format('YYYY-MM-DD');
+                        var tgl2 = moment(dateTime2).subtract(1, 'days').format('YYYY-MM-DD');
+                        
+                        $('#" . $this->selectModalDto->getId() . "').on('" . ModalAjax::EVENT_BEFORE_SHOW . "', function(event, xhr, settings) {
+                            settings['url'] = modalUrl('" . $this->selectModalDto->getUrl() . "', {'start':tgl1, 'end':tgl2});
+                        }).modal('show');
+				}
+			");
+        }
+
+        return null;
+    }
+
+    protected function getDropExpression()
+    {
+        //input Event Drop
+        $options['eventDrop'] = new JsExpression("function(event, element, view){
+					var child = event.parent;
+					var status = event.status;
+					var dateTime2 = new Date(event.end);
+					var dateTime1 = new Date(event.start);
+					var tgl1 = moment(dateTime1).format('YYYY-MM-DD');
+					var tgl2 = moment(dateTime2).subtract(1, 'days').format('YYYY-MM-DD');
+					var id = event.id;
+					if(child != 0 && status != 1){
+						$.get('" . $this->eventDropUrl . "',{'id':id,'start':tgl1,'end':tgl2});
+					}
+				}
+			");
+    }
+
+
+    /**
+     * Creates a widget instance and runs it.
+     * The widget rendering result is returned by this method.
+     * @param array $config name-value pairs that will be used to initialize the object properties
+     * @return string the rendering result of the widget.
+     * @throws \Exception
+     */
+    public static function widget($config = [])
+    {
+        ob_start();
+        ob_implicit_flush(false);
+        $preset = [];
+        if (isset($config['presetClass'])) {
+            /** @var IPreset $obj */
+            $obj = new $config['presetClass']();
+            if ($obj instanceof IPreset) {
+                $preset = $obj::config();
+            }
+            $config = ArrayHelper::merge($preset, $config);
+        }
+
+        try {
+            /* @var $widget Widget */
+            $config['class'] = get_called_class();
+            $widget = Yii::createObject($config);
+            $out = '';
+            if ($widget->beforeRun()) {
+                $result = $widget->run();
+                $out = $widget->afterRun($result);
+            }
+        } catch (\Exception $e) {
+            // close the output buffer opened above if it has not been closed already
+            if (ob_get_level() > 0) {
+                ob_end_clean();
+            }
+            throw $e;
+        }
+
+        return ob_get_clean() . $out;
     }
 }
