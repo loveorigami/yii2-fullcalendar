@@ -17,6 +17,25 @@ class SchedulerDemoPreset implements IPreset
     public static function config(): array
     {
         return [
+            /**
+             * @var array
+             * Possible header keys
+             * - center
+             * - left
+             * - right
+             * Possible options:
+             * - title
+             * - prevYear
+             * - nextYear
+             * - prev
+             * - next
+             * - today
+             * - basicDay
+             * - agendaDay
+             * - basicWeek
+             * - agendaWeek
+             * - month
+             */
             'header' => [
                 'left' => 'today prev,next',
                 'center' => 'title',

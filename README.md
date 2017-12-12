@@ -22,6 +22,11 @@ use lo\widgets\fullcalendar\presets\SchedulerDemoPreset;
 
 echo FullcalendarScheduler::widget([
     'presetClass' => SchedulerDemoPreset::class,
+    'eventSources' => [
+        Url::to(['events', 'id' => $model->id])
+    ],
+    // or
+    // 'events' => Url::to(['events', 'id' => $model->id]),
 ]);
 ```
 more options see bottom...
