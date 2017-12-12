@@ -2,6 +2,7 @@
 
 namespace lo\widgets\fullcalendar;
 
+use lo\widgets\fullcalendar\assets\FullcalendarSchedulerAsset;
 use lo\widgets\modal\ModalAjax;
 use yii\web\JsExpression;
 
@@ -12,6 +13,15 @@ use yii\web\JsExpression;
  */
 class FullcalendarScheduler extends Fullcalendar
 {
+    /**
+     * register FullcalendarSchedulerAsset
+     */
+    protected function registerAssets()
+    {
+        parent::registerAssets();
+        FullcalendarSchedulerAsset::register($this->view);
+    }
+
     /**
      * @return JsExpression
      */

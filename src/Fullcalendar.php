@@ -4,7 +4,6 @@ namespace lo\widgets\fullcalendar;
 
 use lo\core\helpers\ArrayHelper;
 use lo\widgets\fullcalendar\assets\FullcalendarAsset;
-use lo\widgets\fullcalendar\assets\FullcalendarSchedulerAsset;
 use lo\widgets\fullcalendar\assets\ThemeAsset;
 use lo\widgets\fullcalendar\dto\SelectModalDto;
 use lo\widgets\fullcalendar\presets\IPreset;
@@ -78,11 +77,6 @@ class Fullcalendar extends Widget
     public $theme = false;
 
     /**
-     * @var string url controler save drop move select.
-     */
-    public $eventDropUrl;
-
-    /**
      * @var string
      * Example select expression : JsExpression
      * $JSEventSelect = <<<EOF
@@ -142,7 +136,24 @@ class Fullcalendar extends Widget
      */
     public function run()
     {
-        FullcalendarSchedulerAsset::register($this->view);
+        $this->registerAssets();
+
+        $this->view->registerJs(implode("\n", [
+            "jQuery('#{$this->options['id']}').fullCalendar({$this->getClientOptions()});",
+        ]));
+
+        return $this->render('calendar', [
+            'options' => $this->options,
+            'loading' => $this->loading,
+            'selectModal' => $this->getSelectModal()
+        ]);
+    }
+
+    /**
+     * register assets
+     */
+    protected function registerAssets()
+    {
         $assets = FullcalendarAsset::register($this->view);
 
         if ($this->theme === true) {
@@ -155,16 +166,6 @@ class Fullcalendar extends Widget
         }
 
         $assets->googleCalendar = $this->googleCalendar;
-
-        $this->view->registerJs(implode("\n", [
-            "jQuery('#{$this->options['id']}').fullCalendar({$this->getClientOptions()});",
-        ]));
-
-        return $this->render('calendar', [
-            'options' => $this->options,
-            'loading' => $this->loading,
-            'selectModal' => $this->getSelectModal()
-        ]);
     }
 
     /**
@@ -262,7 +263,7 @@ class Fullcalendar extends Widget
 					var tgl2 = moment(dateTime2).subtract(1, 'days').format('YYYY-MM-DD');
 					var id = event.id;
 					if(child != 0 && status != 1){
-						$.get('" . $this->eventDropUrl . "',{'id':id,'start':tgl1,'end':tgl2});
+						$.get('....',{'id':id,'start':tgl1,'end':tgl2});
 					}
 				}
 			");
