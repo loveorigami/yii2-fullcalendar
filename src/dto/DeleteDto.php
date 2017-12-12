@@ -10,11 +10,10 @@ namespace lo\widgets\fullcalendar\dto;
 
 use yii\helpers\Url;
 
-class SelectModalDto
+class DeleteDto
 {
-    protected $id = 'modal-select';
-    protected $headerLabel = 'Modal Select event - Header Label';
-    protected $modalSize = 'modal-lg';
+    protected $id = 'delete-event';
+    protected $confirm = 'Are you sure?';
     protected $url = '';
 
     /**
@@ -41,17 +40,9 @@ class SelectModalDto
     /**
      * @return string
      */
-    public function getHeader()
+    public function getConfirm()
     {
-        return $this->headerLabel;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSize()
-    {
-        return $this->modalSize;
+        return $this->confirm;
     }
 
     /**

@@ -25,7 +25,7 @@ class FullcalendarScheduler extends Fullcalendar
     /**
      * @return JsExpression
      */
-    protected function getSelectModalExpression()
+    protected function getCreateUrlExpression()
     {
         return new JsExpression("
             function(start,end,jsEvent,view,resource){
@@ -35,9 +35,9 @@ class FullcalendarScheduler extends Fullcalendar
                 var tgl2 = moment(dateTime2).subtract(1, 'days').format('YYYY-MM-DD');
                 var rid = resource.id;
 
-                $('#" . $this->selectModalDto->getId() . "')
+                $('#" . $this->createDto->getId() . "')
                 .on('" . ModalAjax::EVENT_BEFORE_SHOW . "', function(event, xhr, settings) {
-                    settings.url = modalUrl('" . $this->selectModalDto->getUrl() . "', 
+                    settings.url = modalUrl('" . $this->createDto->getUrl() . "', 
                         {
                             'start':tgl1, 
                             'end':tgl2,

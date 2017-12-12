@@ -2,7 +2,8 @@
 /**
  * @var array $options
  * @var string $loading
- * @var string $selectModal
+ * @var string $createWrapper
+ * @var string $updateWrapper
  */
 use yii\helpers\Html;
 
@@ -12,4 +13,5 @@ echo Html::encode($loading);
 echo Html::endTag('div') . "\n";
 echo Html::endTag('div') . "\n";
 
-echo $selectModal;
+echo $createWrapper;
+echo $updateWrapper;
