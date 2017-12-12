@@ -113,6 +113,8 @@ class Fullcalendar extends Widget
      * EOF;
      */
 
+    protected $calendar;
+
     /**
      * Always make sure we have a valid id and class for the Fullcalendar widget
      */
@@ -128,6 +130,9 @@ class Fullcalendar extends Widget
 
         $this->selectModalDto = new SelectModalDto($this->selectModalOptions);
 
+        $this->calendar = "jQuery('#{$this->options['id']}')";
+
+
         parent::init();
     }
 
@@ -139,7 +144,7 @@ class Fullcalendar extends Widget
         $this->registerAssets();
 
         $this->view->registerJs(implode("\n", [
-            "jQuery('#{$this->options['id']}').fullCalendar({$this->getClientOptions()});",
+            $this->calendar . ".fullCalendar({$this->getClientOptions()});",
         ]));
 
         return $this->render('calendar', [
@@ -176,12 +181,11 @@ class Fullcalendar extends Widget
     private function getClientOptions()
     {
         $options = $this->clientOptions;
-        $id = $this->options['id'];
 
         $options['header'] = $this->header;
 
         $options['loading'] = new JsExpression("function(isLoading, view) {
-			jQuery('#$id').find('.fc-loading').toggle(isLoading);
+			{$this->calendar}.find('.fc-loading').toggle(isLoading);
         }");
 
         if (!isset($options['select'])) {
@@ -208,6 +212,16 @@ class Fullcalendar extends Widget
                 "id" => $this->selectModalDto->getId(),
                 'tabindex' => false,
                 'class' => 'header-primary',
+            ],
+            'events' => [
+                ModalAjax::EVENT_MODAL_SUBMIT => new JsExpression("
+                    function(event, data, status, xhr) {
+                        if(status){
+                            {$this->calendar}.fullCalendar('refetchEvents');
+                            $(this).modal('toggle');
+                        }
+                    }
+                ")
             ],
             'clientOptions' => ['backdrop' => 'static', 'keyboard' => FALSE]
         ]);
@@ -243,7 +257,12 @@ class Fullcalendar extends Widget
                 
                 $('#" . $this->selectModalDto->getId() . "')
                 .on('" . ModalAjax::EVENT_BEFORE_SHOW . "', function(event, xhr, settings) {
-                    settings['url'] = modalUrl('" . $this->selectModalDto->getUrl() . "', {'start':tgl1, 'end':tgl2});
+                    settings['url'] = modalUrl('" . $this->selectModalDto->getUrl() . "', 
+                        {
+                            'start':tgl1, 
+                            'end':tgl2
+                        }
+                    );
                 })
                 .modal('show');
             }

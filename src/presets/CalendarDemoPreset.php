@@ -55,10 +55,6 @@ class CalendarDemoPreset implements IPreset
                     ],
                 ],
                 'contentHeight' => 400,
-                'slotLabelFormat' => [
-                    'YYYY MMMM', // top level of text
-                    'D'        // lower level of text
-                ],
                 'eventOverlap' => false,
                 'selectable' => true,
                 'selectHelper' => true,

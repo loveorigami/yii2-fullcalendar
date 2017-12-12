@@ -28,15 +28,22 @@ class FullcalendarScheduler extends Fullcalendar
     protected function getSelectModalExpression()
     {
         return new JsExpression("
-            function(start,end,jsEvent,view){
+            function(start,end,jsEvent,view,resource){
                 var dateTime2 = new Date(end);
                 var dateTime1 = new Date(start);
                 var tgl1 = moment(dateTime1).format('YYYY-MM-DD');
                 var tgl2 = moment(dateTime2).subtract(1, 'days').format('YYYY-MM-DD');
-                
+                var rid = resource.id;
+
                 $('#" . $this->selectModalDto->getId() . "')
                 .on('" . ModalAjax::EVENT_BEFORE_SHOW . "', function(event, xhr, settings) {
-                    settings['url'] = modalUrl('" . $this->selectModalDto->getUrl() . "', {'start':tgl1, 'end':tgl2});
+                    settings.url = modalUrl('" . $this->selectModalDto->getUrl() . "', 
+                        {
+                            'start':tgl1, 
+                            'end':tgl2,
+                            'rid':rid
+                        }
+                    );
                 })
                 .modal('show');
             }
