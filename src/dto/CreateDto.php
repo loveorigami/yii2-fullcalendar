@@ -8,6 +8,7 @@
 
 namespace lo\widgets\fullcalendar\dto;
 
+use lo\widgets\fullcalendar\Fullcalendar;
 use yii\helpers\Url;
 
 class CreateDto
@@ -42,7 +43,7 @@ class CreateDto
      */
     public function getHeader()
     {
-        return $this->headerLabel;
+        return Fullcalendar::t($this->headerLabel);
     }
 
     /**

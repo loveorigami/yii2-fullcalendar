@@ -8,6 +8,7 @@
 
 namespace lo\widgets\fullcalendar\dto;
 
+use lo\widgets\fullcalendar\Fullcalendar;
 use yii\helpers\Url;
 
 /**
@@ -37,7 +38,7 @@ class ResizeDto
      */
     public function getConfirm()
     {
-        return $this->confirm;
+        return Fullcalendar::t($this->confirm);
     }
 
     /**

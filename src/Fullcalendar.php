@@ -91,6 +91,7 @@ class Fullcalendar extends Widget
      *      alert(start + end);
      * }
      * EOF;
+     * @see https://fullcalendar.io/docs/selection/select_callback/
      */
     public $createExpression;
 
@@ -98,10 +99,11 @@ class Fullcalendar extends Widget
      * @var string
      * Example select expression : JsExpression
      * $JSEventClick = <<<EOF
-     * function(calEvent) {
+     * function(calEvent, jsEvent, view) {
      *      alert(calEvent.id);
      * }
      * EOF;
+     * @see https://fullcalendar.io/docs/mouse/eventClick/
      */
     public $updateExpression;
 
@@ -120,10 +122,12 @@ class Fullcalendar extends Widget
      * @var string
      * Example select expression : JsExpression
      * $JSEventResize = <<<EOF
-     * function(calEvent, dayDelta, minuteDelta, revertFunc) {
+     * function(calEvent, delta, revertFunc, jsEvent, ui, view) {
      *     alert(calEvent.id);
      * }
      * EOF;
+     * @see https://fullcalendar.io/docs/event_ui/eventResize/
+     * @see https://fullcalendar.io/docs/event_ui/eventDrop/
      */
     public $resizeExpression;
 
@@ -135,6 +139,7 @@ class Fullcalendar extends Widget
      *     alert(calEvent.id);
      * }
      * EOF;
+     * @see https://fullcalendar.io/docs/event_rendering/eventAfterRender/
      */
     public $afterRenderExpression;
 
@@ -513,7 +518,7 @@ class Fullcalendar extends Widget
         } else {
             if ($this->resizeDto->hasUrl()) {
                 return new JsExpression("
-                function(calEvent, dayDelta, minuteDelta, revertFunc) {
+                function(calEvent, delta, revertFunc, jsEvent, ui, view) {
                 
                     start = calEvent.start.format('{$this->format}');
                     if(calEvent.end){
