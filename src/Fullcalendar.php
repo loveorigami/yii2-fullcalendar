@@ -6,6 +6,7 @@ use lo\core\helpers\ArrayHelper;
 use lo\widgets\fullcalendar\assets\FullcalendarAsset;
 use lo\widgets\fullcalendar\assets\ThemeAsset;
 use lo\widgets\fullcalendar\dto\DeleteDto;
+use lo\widgets\fullcalendar\dto\ResizeDto;
 use lo\widgets\fullcalendar\dto\UpdateDto;
 use lo\widgets\fullcalendar\dto\CreateDto;
 use lo\widgets\fullcalendar\presets\IPreset;
@@ -25,6 +26,9 @@ class Fullcalendar extends Widget
 {
     /** @var  string */
     public $presetClass;
+
+    /** @var  string */
+    public $format = 'YYYY-MM-DD HH:MM:SS';
 
     /**
      * @var array  The fullcalendar options, for all available options check http://fullcalendar.io/docs/
@@ -84,7 +88,7 @@ class Fullcalendar extends Widget
      * Example select expression : JsExpression
      * $JSEventSelect = <<<EOF
      * function(start, end, jsEvent, view) {
-     *      alert (start + end);
+     *      alert(start + end);
      * }
      * EOF;
      */
@@ -94,8 +98,8 @@ class Fullcalendar extends Widget
      * @var string
      * Example select expression : JsExpression
      * $JSEventClick = <<<EOF
-     * function(event) {
-     *      alert (event.id);
+     * function(calEvent) {
+     *      alert(calEvent.id);
      * }
      * EOF;
      */
@@ -105,12 +109,34 @@ class Fullcalendar extends Widget
      * @var string
      * Example select expression : JsExpression
      * $JSEventDelete = <<<EOF
-     * function(event) {
-     *      alert (event.id);
+     * function(calEvent) {
+     *      alert(calEvent.id);
      * }
      * EOF;
      */
     public $deleteExpression;
+
+    /**
+     * @var string
+     * Example select expression : JsExpression
+     * $JSEventResize = <<<EOF
+     * function(calEvent, dayDelta, minuteDelta, revertFunc) {
+     *     alert(calEvent.id);
+     * }
+     * EOF;
+     */
+    public $resizeExpression;
+
+    /**
+     * @var string
+     * Example select expression : JsExpression
+     * $JSEventRender = <<<EOF
+     * function(calEvent, element) {
+     *     alert(calEvent.id);
+     * }
+     * EOF;
+     */
+    public $afterRenderExpression;
 
     /**
      * @var array
@@ -142,6 +168,14 @@ class Fullcalendar extends Widget
     ];
 
     /**
+     * @var array
+     */
+    public $resizeOptions = [
+        'confirm' => 'Are you sure?',
+        'url' => ''
+    ];
+
+    /**
      * @var CreateDto
      */
     protected $createDto;
@@ -155,6 +189,11 @@ class Fullcalendar extends Widget
      * @var DeleteDto
      */
     protected $deleteDto;
+
+    /**
+     * @var resizeDto
+     */
+    protected $resizeDto;
 
     /**
      * jQuery('#id');
@@ -177,6 +216,7 @@ class Fullcalendar extends Widget
         $this->createDto = new CreateDto($this->createOptions);
         $this->updateDto = new UpdateDto($this->updateOptions);
         $this->deleteDto = new DeleteDto($this->deleteOptions);
+        $this->resizeDto = new ResizeDto($this->resizeOptions);
 
         $this->calendar = "jQuery('#{$this->options['id']}')";
 
@@ -225,6 +265,18 @@ class Fullcalendar extends Widget
 
         if (!isset($options['eventClick'])) {
             $options['eventClick'] = $this->getUpdateExpression();
+        }
+
+        if (!isset($options['eventDrop'])) {
+            $options['eventDrop'] = $this->getDropResizeExpression();
+        }
+
+        if (!isset($options['eventResize'])) {
+            $options['eventResize'] = $this->getDropResizeExpression();
+        }
+
+        if (!isset($options['eventAfterRender'])) {
+            $options['eventAfterRender'] = $this->getAfterRenderExpression();
         }
 
         return Json::encode($options);
@@ -284,11 +336,11 @@ class Fullcalendar extends Widget
     protected function getCreateUrlExpression()
     {
         return new JsExpression("
-            function(start,end,jsEvent,view){
+            function(start, end, jsEvent, view){
                 var dateTime2 = new Date(end);
                 var dateTime1 = new Date(start);
-                var tgl1 = moment(dateTime1).format('YYYY-MM-DD');
-                var tgl2 = moment(dateTime2).subtract(1, 'days').format('YYYY-MM-DD');
+                var tgl1 = moment(dateTime1).format('{$this->format}');
+                var tgl2 = moment(dateTime2).subtract(1, 'days').format('{$this->format}');
 
                 $('#" . $this->createDto->getId() . "')
                 .on('" . ModalAjax::EVENT_BEFORE_SHOW . "', function(event, xhr, settings) {
@@ -359,10 +411,10 @@ class Fullcalendar extends Widget
     protected function getUpdateUrlExpression()
     {
         return new JsExpression("
-            function(event){
+            function(calEvent){
                 $('#" . $this->updateDto->getId() . "')
                 .on('" . ModalAjax::EVENT_BEFORE_SHOW . "', function(e, xhr, settings) {
-                    settings.url = modalUrl('" . $this->updateDto->getUrl() . "', {id:event.id});
+                    settings.url = modalUrl('" . $this->updateDto->getUrl() . "', {id:calEvent.id});
                 })
                 .modal('show');
                 " . $this->getDeleteExpression() . "
@@ -389,7 +441,6 @@ class Fullcalendar extends Widget
         ]);
 
         return implode("\r\n", $btn);
-
     }
 
     /**
@@ -399,11 +450,11 @@ class Fullcalendar extends Widget
     {
         $confirm = $this->deleteDto->getConfirm();
 
-        if($this->deleteDto->hasUrl()){
-                return new JsExpression("
+        if ($this->deleteDto->hasUrl()) {
+            return new JsExpression("
                 $('#{$this->deleteDto->getId()}').off().on('click', function(e){
                     e.preventDefault();
-                    var url = modalUrl('" . $this->deleteDto->getUrl() . "', {id:event.id});
+                    var url = '" . $this->deleteDto->getUrl() . "' + '?id=' + calEvent.id;
                     if(confirm('$confirm')){
                         $.ajax({
                             url: url,
@@ -419,11 +470,82 @@ class Fullcalendar extends Widget
         } else {
             return new JsExpression(" 
                 $('#{$this->deleteDto->getId()}').off().on('click', function(e){
-                    alert('Deleted event id - ' + event.id);
+                    alert('Deleted event id - ' + calEvent.id);
                 });
             ");
         }
+    }
 
+    /**
+     * @return JsExpression
+     */
+    protected function getAfterRenderExpression()
+    {
+        if ($this->afterRenderExpression) {
+            return ($this->afterRenderExpression instanceof JsExpression) ? $this->afterRenderExpression : new JsExpression($this->afterRenderExpression);
+        } else {
+            return new JsExpression("
+                function(calEvent, element) {
+                    var desc = calEvent.description;
+                    if(desc){
+                        $(element).popover({
+                            trigger: 'hover',
+                            html: true,
+                            title: calEvent.title, 
+                            content: desc,
+                            container: 'body',
+                            placement: 'top'
+                        });
+                    }
+                }
+            ");
+        }
+    }
+
+    /**
+     * @return JsExpression
+     */
+    protected function getDropResizeExpression()
+    {
+        $confirm = $this->resizeDto->getConfirm();
+        if ($this->resizeExpression) {
+            return ($this->resizeExpression instanceof JsExpression) ? $this->resizeExpression : new JsExpression($this->resizeExpression);
+        } else {
+            if ($this->resizeDto->hasUrl()) {
+                return new JsExpression("
+                function(calEvent, dayDelta, minuteDelta, revertFunc) {
+                
+                    start = calEvent.start.format('{$this->format}');
+                    if(calEvent.end){
+                        end = calEvent.end.format('{$this->format}');
+                    } else {
+                        end = start;
+                    }  
+                    
+                    var url = '" . $this->resizeDto->getUrl() . "';
+                    if(confirm('$confirm')){
+                        $.ajax({
+                            url: url,
+                            method: 'post',
+                            data:{
+                                id:calEvent.id, 
+                                start:start, 
+                                end:end
+                            },
+                            success: function() {
+                                {$this->calendar}.fullCalendar('refetchEvents');
+                            }
+                        });
+                    }
+                }
+            ");
+            } else {
+                return new JsExpression("function(calEvent, dayDelta, minuteDelta, revertFunc) {
+                        alert('Resize event id - ' + calEvent.id);
+                    }
+                ");
+            }
+        }
     }
 
     /**
@@ -435,8 +557,6 @@ class Fullcalendar extends Widget
      */
     public static function widget($config = [])
     {
-        ob_start();
-        ob_implicit_flush(false);
         $preset = [];
         if (isset($config['presetClass'])) {
             /** @var IPreset $obj */
@@ -446,25 +566,7 @@ class Fullcalendar extends Widget
             }
             $config = ArrayHelper::merge($preset, $config);
         }
-
-        try {
-            /* @var $widget Widget */
-            $config['class'] = get_called_class();
-            $widget = Yii::createObject($config);
-            $out = '';
-            if ($widget->beforeRun()) {
-                $result = $widget->run();
-                $out = $widget->afterRun($result);
-            }
-        } catch (\Exception $e) {
-            // close the output buffer opened above if it has not been closed already
-            if (ob_get_level() > 0) {
-                ob_end_clean();
-            }
-            throw $e;
-        }
-
-        return ob_get_clean() . $out;
+        return parent::widget($config);
     }
 
     /**

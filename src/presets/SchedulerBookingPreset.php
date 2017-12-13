@@ -17,7 +17,7 @@ class SchedulerBookingPreset implements IPreset
             ],
             'clientOptions' => [
                 'schedulerLicenseKey' => 'GPL-My-Project-Is-Open-Source',
-                'editable' => false, // enable draggable events
+                'editable' => true, // enable draggable events
                 'aspectRatio' => 1.8,
                 'scrollTime' => '00:00', // undo default 6am scrollTime
                 'eventLimit' => 1,

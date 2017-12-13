@@ -70,6 +70,9 @@ class Event extends CalendarModel
     /** @var  string Sets an event's text color just like the calendar-wide eventTextColor option. */
     public $textColor;
 
+    /** @var  string event description */
+    public $description;
+
     /**
      * @return array
      */
@@ -77,7 +80,7 @@ class Event extends CalendarModel
     {
         return [
             [['title', 'start'], 'required'],
-            [['id', 'end', 'url', 'className', 'rendering', 'constraint', 'source', 'color', 'backgroundColor', 'borderColor', 'textColor'], 'safe'],
+            [['id', 'end', 'url', 'className', 'rendering', 'constraint', 'source', 'color', 'backgroundColor', 'borderColor', 'textColor', 'description'], 'safe'],
             [['editable', 'startEditable', 'durationEditable', 'overlap'], 'boolean'],
         ];
     }

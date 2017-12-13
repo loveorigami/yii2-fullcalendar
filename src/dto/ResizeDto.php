@@ -10,11 +10,14 @@ namespace lo\widgets\fullcalendar\dto;
 
 use yii\helpers\Url;
 
-class CreateDto
+/**
+ * Class ResizeDto
+ * @package lo\widgets\fullcalendar\dto
+ * @author Lukyanov Andrey <loveorigami@mail.ru>
+ */
+class ResizeDto
 {
-    protected $id = 'modal-create';
-    protected $headerLabel = 'Create event';
-    protected $modalSize = 'modal-lg';
+    protected $confirm = 'Are you sure?';
     protected $url = '';
 
     /**
@@ -32,25 +35,9 @@ class CreateDto
     /**
      * @return string
      */
-    public function getId()
+    public function getConfirm()
     {
-        return $this->id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getHeader()
-    {
-        return $this->headerLabel;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSize()
-    {
-        return $this->modalSize;
+        return $this->confirm;
     }
 
     /**

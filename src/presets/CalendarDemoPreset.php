@@ -41,6 +41,10 @@ class CalendarDemoPreset implements IPreset
                 'center' => 'title',
                 'right' => 'agendaWeek,month'
             ],
+            'createExpression' => 'function(start, end, jsEvent, view) { console.log(jsEvent); }',
+            'updateExpression' => 'function(calEvent){ alert(calEvent.id); }',
+            'deleteExpression' => 'function(calEvent){ alert(calEvent.id); }',
+            'afterRenderExpression' => 'function(calEvent, element){ alert(calEvent.id); }',
             'clientOptions' => [
                 'now' => CalendarHelper::now(),
                 'events' => CalendarHelper::events(),

@@ -31,8 +31,8 @@ class FullcalendarScheduler extends Fullcalendar
             function(start,end,jsEvent,view,resource){
                 var dateTime2 = new Date(end);
                 var dateTime1 = new Date(start);
-                var tgl1 = moment(dateTime1).format('YYYY-MM-DD');
-                var tgl2 = moment(dateTime2).subtract(1, 'days').format('YYYY-MM-DD');
+                var tgl1 = moment(dateTime1).format();
+                var tgl2 = moment(dateTime2).subtract(1, 'days').format();
                 var rid = resource.id;
 
                 $('#" . $this->createDto->getId() . "')
