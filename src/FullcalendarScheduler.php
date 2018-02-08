@@ -49,4 +49,51 @@ class FullcalendarScheduler extends Fullcalendar
             }
 		");
     }
+
+    /**
+     * @return JsExpression
+     */
+    protected function getDropResizeExpression()
+    {
+        $confirm = $this->resizeDto->getConfirm();
+        if ($this->resizeExpression) {
+            return ($this->resizeExpression instanceof JsExpression) ? $this->resizeExpression : new JsExpression($this->resizeExpression);
+        } else {
+            if ($this->resizeDto->hasUrl()) {
+                return new JsExpression("
+                function(calEvent, delta, revertFunc, jsEvent, ui, view) {
+                
+                    start = calEvent.start.format('{$this->format}');
+                    if(calEvent.end){
+                        end = calEvent.end.format('{$this->format}');
+                    } else {
+                        end = start;
+                    }  
+
+                    var url = '" . $this->resizeDto->getUrl() . "';
+                    if(confirm('$confirm')){
+                        $.ajax({
+                            url: url,
+                            method: 'post',
+                            data:{
+                                id:calEvent.id, 
+                                rid:calEvent.resourceId,
+                                start:start, 
+                                end:end
+                            },
+                            success: function() {
+                                {$this->calendar}.fullCalendar('refetchEvents');
+                            }
+                        });
+                    }
+                }
+            ");
+            } else {
+                return new JsExpression("function(calEvent, dayDelta, minuteDelta, revertFunc) {
+                        alert('Resize event id - ' + calEvent.id);
+                    }
+                ");
+            }
+        }
+    }
 }
