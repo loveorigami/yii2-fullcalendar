@@ -135,6 +135,18 @@ class Fullcalendar extends Widget
      * @var string
      * Example select expression : JsExpression
      * $JSEventRender = <<<EOF
+     * function(calEvent) {
+     *     alert(calEvent.id);
+     * }
+     * EOF;
+     * @see https://fullcalendar.io/docs/event_data/eventDataTransform/
+     */
+    public $dataTransformExpression;
+
+    /**
+     * @var string
+     * Example select expression : JsExpression
+     * $JSEventRender = <<<EOF
      * function(calEvent, element) {
      *     alert(calEvent.id);
      * }
@@ -272,6 +284,10 @@ class Fullcalendar extends Widget
             $options['eventClick'] = $this->getUpdateExpression();
         }
 
+        if (!isset($options['eventDataTransform'])) {
+            $options['eventDataTransform'] = $this->getDataTransformExpression();
+        }
+
         if (!isset($options['eventDrop'])) {
             $options['eventDrop'] = $this->getDropResizeExpression();
         }
@@ -289,6 +305,7 @@ class Fullcalendar extends Widget
 
     /**
      * @return null|string
+     * @throws \Exception
      */
     protected function getCreateWrapper()
     {
@@ -363,6 +380,7 @@ class Fullcalendar extends Widget
 
     /**
      * @return null|string
+     * @throws \Exception
      */
     protected function getUpdateWrapper()
     {
@@ -484,6 +502,25 @@ class Fullcalendar extends Widget
     /**
      * @return JsExpression
      */
+    protected function getDataTransformExpression()
+    {
+        if ($this->dataTransformExpression) {
+            return ($this->dataTransformExpression instanceof JsExpression) ? $this->dataTransformExpression : new JsExpression($this->dataTransformExpression);
+        } else {
+            return new JsExpression("
+                function(calEvent, element) {
+                    if(calEvent.allDay && calEvent.end){
+                        calEvent.end = moment(calEvent.end).add(1, 'days');
+                    }
+                    return calEvent;
+                }
+            ");
+        }
+    }
+
+    /**
+     * @return JsExpression
+     */
     protected function getAfterRenderExpression()
     {
         if ($this->afterRenderExpression) {
@@ -521,6 +558,11 @@ class Fullcalendar extends Widget
                 function(calEvent, delta, revertFunc, jsEvent, ui, view) {
                 
                     start = calEvent.start.format('{$this->format}');
+                    
+                    if(calEvent.allDay && calEvent.end){
+                        calEvent.end = moment(calEvent.end).add(-1, 'days');
+                    }
+                    
                     if(calEvent.end){
                         end = calEvent.end.format('{$this->format}');
                     } else {

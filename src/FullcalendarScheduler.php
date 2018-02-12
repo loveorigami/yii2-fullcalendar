@@ -13,6 +13,9 @@ use yii\web\JsExpression;
  */
 class FullcalendarScheduler extends Fullcalendar
 {
+    /** @var  string */
+    public $format = 'YYYY-MM-DD';
+
     /**
      * register FullcalendarSchedulerAsset
      */
@@ -64,12 +67,17 @@ class FullcalendarScheduler extends Fullcalendar
                 function(calEvent, delta, revertFunc, jsEvent, ui, view) {
                 
                     start = calEvent.start.format('{$this->format}');
+                    
+                    if(calEvent.allDay && calEvent.end){
+                        calEvent.end = moment(calEvent.end).add(-1, 'days');
+                    }
+                    
                     if(calEvent.end){
                         end = calEvent.end.format('{$this->format}');
                     } else {
                         end = start;
                     }  
-
+                    
                     var url = '" . $this->resizeDto->getUrl() . "';
                     if(confirm('$confirm')){
                         $.ajax({
