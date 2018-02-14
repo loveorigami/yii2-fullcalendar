@@ -44,6 +44,9 @@ class Resource extends CalendarModel
     /** @var  string Parent is a reference to the parent Resource Object. It will be null if there is no parent. */
     public $parent;
 
+    /** @var string group filed in resource */
+    public $group;
+
     /**
      * @return array
      */
@@ -51,7 +54,7 @@ class Resource extends CalendarModel
     {
         return [
             [['id', 'title'], 'required'],
-            [['eventColor', 'eventBackgroundColor', 'eventBorderColor', 'eventTextColor', 'eventClassName', 'children', 'parentId', 'parent'], 'safe'],
+            [['eventColor', 'eventBackgroundColor', 'eventBorderColor', 'eventTextColor', 'eventClassName', 'children', 'parentId', 'parent', 'group'], 'safe'],
         ];
     }
 }
