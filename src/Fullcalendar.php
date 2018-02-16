@@ -253,7 +253,7 @@ class Fullcalendar extends Widget
     public function run()
     {
         $this->view->registerJs(implode("\n", [
-            $this->calendar . ".fullCalendar({$this->getClientOptions()});",
+            $this->calendar . ".fullCalendar({$this->getClientOptions()});"
         ]));
 
         return $this->render('calendar', [

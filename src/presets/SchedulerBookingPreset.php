@@ -21,10 +21,16 @@ class SchedulerBookingPreset implements IPreset
                 'aspectRatio' => 1.5,
                 'scrollTime' => '00:00', // undo default 6am scrollTime
                 'eventLimit' => 1,
-                'defaultView' => 'timelineMonth',
+                'defaultView' => 'timelineMonth', // or timelineYearNow
                 'views' => [
                     'timelineMonth' => [
                         'type' => 'timeline',
+                    ],
+                    'timelineYearNow' => [
+                        'type' => 'timeline',
+                        'duration' => [
+                           'days' => 365
+                        ]
                     ],
                 ],
                 'contentHeight' => 400,
