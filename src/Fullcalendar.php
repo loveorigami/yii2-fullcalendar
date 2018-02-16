@@ -27,6 +27,7 @@ class Fullcalendar extends Widget
     /** @var  string */
     public $presetClass;
 
+
     /** @var  string */
     public $format = 'YYYY-MM-DD HH:MM:SS';
 
@@ -192,6 +193,9 @@ class Fullcalendar extends Widget
         'url' => ''
     ];
 
+    public $maxViewRenderDate;
+    public $minViewRenderDate;
+
     /**
      * @var CreateDto
      */
@@ -276,8 +280,20 @@ class Fullcalendar extends Widget
 			{$this->calendar}.find('.fc-loading').toggle(isLoading);
         }");
 
+        if (!isset($options['selectOverlap'])) {
+            $options['selectOverlap'] = new JsExpression("
+                function(calEvent) {
+                    return calEvent.rendering != 'background';
+                }
+            ");
+        }
+
         if (!isset($options['select'])) {
             $options['select'] = $this->getCreateExpression();
+        }
+
+        if (!isset($options['viewRender'])) {
+            $options['viewRender'] = $this->getViewRenderExpression();
         }
 
         if (!isset($options['eventClick'])) {
@@ -334,6 +350,36 @@ class Fullcalendar extends Widget
             ],
             'clientOptions' => ['backdrop' => 'static', 'keyboard' => FALSE]
         ]);
+    }
+
+    /**
+     * @return JsExpression
+     */
+    protected function getViewRenderExpression()
+    {
+        return new JsExpression("
+                function(currentView) {
+                    var minDate = moment('{$this->minViewRenderDate}');
+                    var maxDate = moment('{$this->maxViewRenderDate}');
+                    // Past
+                    if (minDate >= currentView.start && minDate <= currentView.end) {
+                        $('.fc-prev-button').prop('disabled', true); 
+                        $('.fc-prev-button').addClass('fc-state-disabled'); 
+                    }
+                    else {
+                        $('.fc-prev-button').removeClass('fc-state-disabled'); 
+                        $('.fc-prev-button').prop('disabled', false); 
+                    }
+                    // Future
+                    if (maxDate >= currentView.start && maxDate <= currentView.end) {
+                        $('.fc-next-button').prop('disabled', true); 
+                        $('.fc-next-button').addClass('fc-state-disabled'); 
+                    } else {
+                        $('.fc-next-button').removeClass('fc-state-disabled'); 
+                        $('.fc-next-button').prop('disabled', false); 
+                    }
+                }
+            ");
     }
 
     /**

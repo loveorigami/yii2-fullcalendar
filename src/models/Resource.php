@@ -47,6 +47,8 @@ class Resource extends CalendarModel
     /** @var string group filed in resource */
     public $group;
 
+    public $businessHours;
+
     /**
      * @return array
      */
@@ -54,7 +56,7 @@ class Resource extends CalendarModel
     {
         return [
             [['id', 'title'], 'required'],
-            [['eventColor', 'eventBackgroundColor', 'eventBorderColor', 'eventTextColor', 'eventClassName', 'children', 'parentId', 'parent', 'group'], 'safe'],
+            [['eventColor', 'eventBackgroundColor', 'eventBorderColor', 'eventTextColor', 'eventClassName', 'children', 'parentId', 'parent', 'group', 'businessHours'], 'safe'],
         ];
     }
 }

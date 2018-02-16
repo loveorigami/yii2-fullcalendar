@@ -1,0 +1,30 @@
+.fc-sun, .fc-sat {
+    color: red;
+}
+
+.fc-nonbusiness {
+    background-color: pink;
+}
+
+.fc-loading {
+    background-color: white;
+}
+
+.calendar {
+    position: relative;
+}
+
+.fc-header {
+    position: fixed;
+}
+
+.fc-content {
+    padding-top: 0;
+}
+
+.fc-toolbar.fc-header-toolbar {
+    margin: 0;
+}
+.fc-toolbar{
+    padding: 0 !important;
+}

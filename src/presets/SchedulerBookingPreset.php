@@ -18,7 +18,7 @@ class SchedulerBookingPreset implements IPreset
             'clientOptions' => [
                 'schedulerLicenseKey' => 'GPL-My-Project-Is-Open-Source',
                 'editable' => true, // enable draggable events
-                'aspectRatio' => 1.8,
+                'aspectRatio' => 1.5,
                 'scrollTime' => '00:00', // undo default 6am scrollTime
                 'eventLimit' => 1,
                 'defaultView' => 'timelineMonth',
@@ -37,7 +37,7 @@ class SchedulerBookingPreset implements IPreset
                 'selectable' => true,
                 'selectHelper' => true,
                 'resourceLabelText' => 'Rooms',
-                'resourceAreaWidth' => '20%',
+                'resourceAreaWidth' => '24%',
             ]
         ];
     }

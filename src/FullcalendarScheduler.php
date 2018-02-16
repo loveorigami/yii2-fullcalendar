@@ -2,6 +2,7 @@
 
 namespace lo\widgets\fullcalendar;
 
+use lo\widgets\fullcalendar\assets\DesignAsset;
 use lo\widgets\fullcalendar\assets\FullcalendarSchedulerAsset;
 use lo\widgets\modal\ModalAjax;
 use yii\web\JsExpression;
@@ -23,6 +24,7 @@ class FullcalendarScheduler extends Fullcalendar
     {
         parent::registerAssets();
         FullcalendarSchedulerAsset::register($this->view);
+        DesignAsset::register($this->view);
     }
 
     /**
@@ -79,6 +81,7 @@ class FullcalendarScheduler extends Fullcalendar
                     }  
                     
                     var url = '" . $this->resizeDto->getUrl() . "';
+                    
                     if(confirm('$confirm')){
                         $.ajax({
                             url: url,

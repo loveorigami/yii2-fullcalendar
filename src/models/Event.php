@@ -19,6 +19,12 @@ class Event extends CalendarModel
     /** @var  string The identifier for the specified resource, attaches this event to the specified resource */
     public $resourceId;
 
+    /** @var array The identifier for the specified resources */
+    public $resourceIds;
+
+    /** @var boolean Determines whether the user can drag events between resources. The default value is inherited from the master editable flag, which is false by default. */
+    public $resourceEditable;
+
     /** @var  string The text on an event's element */
     public $title;
 
@@ -55,6 +61,8 @@ class Event extends CalendarModel
     /** @var  string an event ID, "businessHours", object. Optional. Overrides the master eventConstraint option for this single event. */
     public $constraint;
 
+    public $dow;
+
     /** @var  string Event Source Object. Automatically populated. A reference to the event source that this event came from. */
     public $source;
 
@@ -80,8 +88,8 @@ class Event extends CalendarModel
     {
         return [
             [['title', 'start'], 'required'],
-            [['id', 'end', 'url', 'className', 'rendering', 'constraint', 'source', 'color', 'backgroundColor', 'borderColor', 'textColor', 'description'], 'safe'],
-            [['editable', 'startEditable', 'durationEditable', 'overlap'], 'boolean'],
+            [['id', 'end', 'url', 'className', 'rendering', 'constraint', 'source', 'color', 'backgroundColor', 'borderColor', 'textColor', 'description', 'dow'], 'safe'],
+            [['editable', 'startEditable', 'resourceEditable', 'durationEditable', 'overlap'], 'boolean'],
         ];
     }
 }
