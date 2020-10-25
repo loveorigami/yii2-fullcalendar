@@ -2,7 +2,8 @@
 
 namespace lo\widgets\fullcalendar;
 
-use lo\core\helpers\ArrayHelper;
+//use lo\core\helpers\ArrayHelper;
+use yii\helpers\ArrayHelper;
 use lo\widgets\fullcalendar\assets\FullcalendarAsset;
 use lo\widgets\fullcalendar\assets\ThemeAsset;
 use lo\widgets\fullcalendar\dto\DeleteDto;
